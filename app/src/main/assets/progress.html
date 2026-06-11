@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn HTML - Progress Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Progress dashboard design overrides */
+        .level-progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .week-calendar {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .calendar-day {
+            flex: 1;
+            background: var(--bg-app);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .calendar-day.active {
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            color: white;
+            border-color: #F59E0B;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span>Learn HTML</span>
+            </div>
+            <nav class="nav-desktop">
+                <a href="index.html">Home</a>
+                <a href="lessons.html">Lessons</a>
+                <a href="playground.html">Playground</a>
+                <a href="quiz.html">Quiz</a>
+                <a href="progress.html" class="active">Progress</a>
+            </nav>
+            <div class="header-controls">
+                <button class="btn-control" onclick="toggleTheme()" title="Toggle Dark Mode">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App content layout -->
+    <main class="app-content" style="padding-bottom: 95px;">
+        <h2 style="margin-bottom: 6px; color: var(--primary);">Your Learning Progress</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem;">Review your achievements, manage offline configurations, and download metadata backups.</p>
+
+        <div class="grid-2">
+            <!-- Left Panel: SVG Metrics Gauges and Level Progress Bars -->
+            <div class="card">
+                <h3 style="color: var(--primary); margin-bottom: 20px;">Progress Overview 📊</h3>
+                
+                <!-- SVG circular percentage meters -->
+                <div class="progress-svg-container">
+                    <svg class="progress-gauge" viewBox="0 0 100 100" width="100%" height="100%">
+                        <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                        <circle class="gauge-fill" id="dashboardCircularGauge" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2"></circle>
+                    </svg>
+                    <div class="progress-pct-text" id="dashboardPctText">0%</div>
+                </div>
+
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-top: 10px; margin-bottom: 24px;">Overall HTML completion scale</p>
+
+                <!-- Detailed Level Indicators bars -->
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <div class="level-progress-row">
+                            <span style="font-size:0.9rem; font-weight:700;">Level 1: General Basics</span>
+                            <span id="levelText_1" style="font-size:0.8rem; color:var(--text-muted);">0/5 Finished</span>
+                        </div>
+                        <div style="height: 8px; background:var(--tab-inactive); border-radius:4px; overflow:hidden;">
+                            <div id="levelBar_1" style="width:0%; height:100%; background: #3B82F6; transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="level-progress-row">
+                            <span style="font-size:0.9rem; font-weight:700;">Level 2: Typography & Styling</span>
+                            <span id="levelText_2" style="font-size:0.8rem; color:var(--text-muted);">0/4 Finished</span>
+                        </div>
+                        <div style="height: 8px; background:var(--tab-inactive); border-radius:4px; overflow:hidden;">
+                            <div id="levelBar_2" style="width:0%; height:100%; background: #10B981; transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="level-progress-row">
+                            <span style="font-size:0.9rem; font-weight:700;">Level 3: Tables & Rows</span>
+                            <span id="levelText_3" style="font-size:0.8rem; color:var(--text-muted);">0/3 Finished</span>
+                        </div>
+                        <div style="height: 8px; background:var(--tab-inactive); border-radius:4px; overflow:hidden;">
+                            <div id="levelBar_3" style="width:0%; height:100%; background: #8B5CF6; transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="level-progress-row">
+                            <span style="font-size:0.9rem; font-weight:700;">Level 4: Input Elements Forms</span>
+                            <span id="levelText_4" style="font-size:0.8rem; color:var(--text-muted);">0/3 Finished</span>
+                        </div>
+                        <div style="height: 8px; background:var(--tab-inactive); border-radius:4px; overflow:hidden;">
+                            <div id="levelBar_4" style="width:0%; height:100%; background: #F59E0B; transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="level-progress-row">
+                            <span style="font-size:0.9rem; font-weight:700;">Level 5: Semantics & Media</span>
+                            <span id="levelText_5" style="font-size:0.8rem; color:var(--text-muted);">0/2 Finished</span>
+                        </div>
+                        <div style="height: 8px; background:var(--tab-inactive); border-radius:4px; overflow:hidden;">
+                            <div id="levelBar_5" style="width:0%; height:100%; background: #EC4899; transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Streak Calendar & Badges achievements -->
+            <div style="display:flex; flex-direction: column; gap: 24px;">
+                <!-- Streak Calendar widget Card  -->
+                <div class="card" style="margin-bottom:0;">
+                    <h3 style="color: var(--secondary); margin-bottom: 6px;">7-Day Study Calendar 📅</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted);">Practice HTML at least 1 minute each day to light up your calendar elements:</p>
+                    
+                    <div class="week-calendar" id="streakWeekCalendar">
+                        <!-- Plotted dynamically by dates offset -->
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items:center; font-size: 0.85rem;">
+                        <span>Current Streak Count:</span>
+                        <strong id="dashboardStreakText" style="color: var(--warning); font-size: 1.1rem;">0 🔥</strong>
+                    </div>
+
+                    <!-- Daily Goal Progress display inside progress screen -->
+                    <div style="margin-top: 18px; border-top: 1px dashed var(--border-glass); padding-top: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.85rem;">
+                            <span style="font-weight: 700; color: var(--primary);">🎯 Today's Goal Progress</span>
+                            <span id="progressDailyGoalText" style="font-weight: 700;">0/3 completed</span>
+                        </div>
+                        <div style="height: 8px; background: var(--tab-inactive); border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
+                            <div id="progressDailyGoalProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--success), #24A148); transition: width 0.4s;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--text-muted);">
+                            <span id="progressDailyGoalPhrase">Keep working on your target!</span>
+                            <strong id="progressDailyGoalPercent">0%</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badges unlocked Card -->
+                <div class="card" style="margin-bottom: 0;">
+                    <h3 style="color: var(--success); margin-bottom: 12px;">Earned Achievements 🎖️</h3>
+                    <div class="badge-grid">
+                        <!-- Starter Badge -->
+                        <div class="badge-item" id="badgeStarter">
+                            <span class="badge-img">🚀</span>
+                            <span class="badge-lbl">Starter Badge</span>
+                            <div style="font-size:0.6rem; color: var(--text-muted); margin-top:2px;">5 Lessons</div>
+                        </div>
+
+                        <!-- Builder Badge -->
+                        <div class="badge-item" id="badgeBuilder">
+                            <span class="badge-img">🛠️</span>
+                            <span class="badge-lbl">Builder Badge</span>
+                            <div style="font-size:0.6rem; color: var(--text-muted); margin-top:2px;">10 Lessons</div>
+                        </div>
+
+                        <!-- Master Badge -->
+                        <div class="badge-item" id="badgeMaster">
+                            <span class="badge-img">🎓</span>
+                            <span class="badge-lbl">Master Badge</span>
+                            <div style="font-size:0.6rem; color: var(--text-muted); margin-top:2px;">All Lessons</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences Settings Panel -->
+                <div class="card" style="margin-bottom: 0;">
+                    <h3 style="color: var(--text-main); margin-bottom: 15px;">Preferences & Logs ⚙️</h3>
+                    <div class="preference-list">
+                        
+                        <!-- SW Daily Notification toggle switch -->
+                        <div class="preference-item">
+                            <div>
+                                <strong style="font-size: 0.9rem; display:block;">Daily Reminders</strong>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Web Notification alerts</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="notifToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Backup export data triggers button -->
+                        <div class="preference-item" style="border-bottom: none; padding-bottom: 0;">
+                            <div>
+                                <strong style="font-size: 0.9rem; display:block;">Data Backup</strong>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Save coordinates to file</span>
+                            </div>
+                            <button class="btn btn-secondary btn-small" onclick="exportDataBackupFile()" style="margin-top: 4px;">
+                                Download Backup JSON 📥
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Navigation Bar for Mobile -->
+    <nav class="nav-mobile">
+        <a href="index.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="lessons.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.89 12.5L12 15.83l6.11-3.33L12 9.17 5.89 12.5z"/></svg>
+            <span>Lessons</span>
+        </a>
+        <a href="playground.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+            <span>Playground</span>
+        </a>
+        <a href="quiz.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            <span>Quiz</span>
+        </a>
+        <a href="progress.html" class="nav-mobile-item active">
+            <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+            <span>Progress</span>
+        </a>
+    </nav>
+
+    <!-- Load scripts in logical order -->
+    <script src="js/lessons.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        // Update percentages and active styling configurations
+        function updateProgressDashboard() {
+            const totalCount = HTML_LESSONS.length;
+            const completeCount = completedLessons.length;
+            
+            // Calc Overall
+            const ratio = totalCount > 0 ? (completeCount / totalCount) : 0;
+            const percentVal = Math.round(ratio * 100);
+            
+            // Circular SVG parameters conversion
+            const strokeVal = 251.2; // 2 * PI * r (r=40)
+            const strokeOffset = strokeVal - (ratio * strokeVal);
+            
+            document.getElementById("dashboardCircularGauge").style.strokeDashoffset = strokeOffset;
+            document.getElementById("dashboardPctText").textContent = `${percentVal}%`;
+
+            // Display per level calculations
+            const levelsTotal = { 1: 5, 2: 4, 3: 3, 4: 3, 5: 2 };
+            const levelsCompletedCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+            // Tabulate finished level items
+            completedLessons.forEach(id => {
+                const lesson = HTML_LESSONS.find(l => l.id === id);
+                if (lesson) {
+                    levelsCompletedCount[lesson.level] += 1;
+                }
+            });
+
+            // Update UI Bars and Texts
+            for (let lvl = 1; lvl <= 5; lvl++) {
+                const finished = levelsCompletedCount[lvl];
+                const budgetVal = levelsTotal[lvl];
+                const lvlPct = Math.round((finished / budgetVal) * 100);
+                
+                document.getElementById(`levelText_${lvl}`).textContent = `${finished}/${budgetVal} Finished`;
+                document.getElementById(`levelBar_${lvl}`).style.width = `${lvlPct}%`;
+            }
+
+            // Streak Count Text
+            document.getElementById("dashboardStreakText").textContent = `${userStreak} 🔥`;
+
+            // Badges earned achievements state
+            if (localStorage.getItem("badge_starter")) {
+                document.getElementById("badgeStarter").classList.add("earned");
+            }
+            if (localStorage.getItem("badge_builder")) {
+                document.getElementById("badgeBuilder").classList.add("earned");
+            }
+            if (localStorage.getItem("badge_master")) {
+                document.getElementById("badgeMaster").classList.add("earned");
+            }
+
+            // Sync daily goals status progress
+            updateDailyGoalStats();
+        }
+
+        function updateDailyGoalStats() {
+            const completedToday = getLessonsCompletedTodayCount();
+            const dailyGoal = getDailyGoal();
+            
+            document.getElementById("progressDailyGoalText").textContent = `${completedToday}/${dailyGoal} completed`;
+            const pct = dailyGoal > 0 ? Math.round((completedToday / dailyGoal) * 100) : 0;
+            const barPct = Math.min(100, pct);
+            
+            document.getElementById("progressDailyGoalPercent").textContent = `${pct}%`;
+            document.getElementById("progressDailyGoalProgressBar").style.width = `${barPct}%`;
+            
+            const phraseSpan = document.getElementById("progressDailyGoalPhrase");
+            if (pct >= 100) {
+                phraseSpan.innerHTML = "🎉 <strong style='color: var(--success);'>Daily goal achieved today!</strong>";
+                document.getElementById("progressDailyGoalProgressBar").style.background = "linear-gradient(90deg, #24A148, #1E8239)";
+            } else if (pct >= 50) {
+                phraseSpan.textContent = "More than halfway! Finish strong!";
+                document.getElementById("progressDailyGoalProgressBar").style.background = "linear-gradient(90deg, var(--success), #24A148)";
+            } else {
+                phraseSpan.textContent = "Keep working on your target!";
+                document.getElementById("progressDailyGoalProgressBar").style.background = "linear-gradient(90deg, var(--success), #24A148)";
+            }
+        }
+
+        window.addEventListener("dailyGoalUpdated", () => {
+            completedLessons = JSON.parse(localStorage.getItem("html_completed_lessons") || "[]");
+            updateProgressDashboard();
+        });
+
+        // Draw last 7 calendar days visually in horizontal boxes
+        function plotStreakCalendar() {
+            const calendar = document.getElementById("streakWeekCalendar");
+            calendar.innerHTML = "";
+
+            const daysOfNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const today = new Date();
+
+            // Plot calendar backward from today to 6 days ago (7 items)
+            for (let d = 6; d >= 0; d--) {
+                const cursorDate = new Date();
+                cursorDate.setDate(today.getDate() - d);
+                
+                const dateLabel = cursorDate.getDate();
+                const dayAbbrev = daysOfNames[cursorDate.getDay()];
+                
+                const calendarBox = document.createElement("div");
+                calendarBox.className = "calendar-day";
+
+                // Check active state
+                const isTodayActive = (d === 0 && lastActiveDate === today.toDateString());
+                // Simple representation: if they did activity within active log days
+                const isConsecutiveStreakMatch = (userStreak > 0 && d < userStreak);
+
+                if (isTodayActive || isConsecutiveStreakMatch) {
+                    calendarBox.classList.add("active");
+                }
+
+                calendarBox.innerHTML = `
+                    <div style="font-size:0.7rem; opacity:0.85;">${dayAbbrev}</div>
+                    <strong style="display:block; font-size:1.1rem; margin-top:2px;">${dateLabel}</strong>
+                `;
+                calendar.appendChild(calendarBox);
+            }
+        }
+
+        // Export data backup JSON as downloadable text file
+        function exportDataBackupFile() {
+            const payload = {
+                appName: "Learn HTML - Mobile Zero to Hero",
+                exportTimestamp: new Date().toISOString(),
+                streakDays: userStreak,
+                lastActivityStr: lastActiveDate,
+                scores: quizScores,
+                finishedLessons: completedLessons,
+                achievements: {
+                    starter: localStorage.getItem("badge_starter") === "true",
+                    builder: localStorage.getItem("badge_builder") === "true",
+                    master: localStorage.getItem("badge_master") === "true"
+                }
+            };
+
+            const serialized = JSON.stringify(payload, null, 2);
+            const blob = new Blob([serialized], { type: "application/json" });
+            const endpointUrl = URL.createObjectURL(blob);
+
+            const invisibleAnchor = document.createElement("a");
+            invisibleAnchor.href = endpointUrl;
+            invisibleAnchor.download = `html_learning_backup_${new Date().setHours(0,0,0,0)}.json`;
+            
+            document.body.appendChild(invisibleAnchor);
+            invisibleAnchor.click();
+            
+            document.body.removeChild(invisibleAnchor);
+            URL.revokeObjectURL(endpointUrl);
+            
+            showToast("Backup exported & saved successfully! 📥", "success");
+            playTone(600, "sine", 0.12);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateProgressDashboard();
+            plotStreakCalendar();
+            initDailyReminders();
+        });
+    </script>
+</body>
+</html>

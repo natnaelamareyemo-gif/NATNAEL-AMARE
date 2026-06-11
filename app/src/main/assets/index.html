@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn HTML - Zero to Hero</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Toast Notifications Area -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Header Banner -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span>Learn HTML</span>
+            </div>
+            
+            <!-- Desktop Navbar -->
+            <nav class="nav-desktop">
+                <a href="index.html" class="active">Home</a>
+                <a href="lessons.html">Lessons</a>
+                <a href="playground.html">Playground</a>
+                <a href="quiz.html">Quiz</a>
+                <a href="progress.html">Progress</a>
+            </nav>
+
+            <div class="header-controls">
+                <!-- Sound Toggle -->
+                <button class="btn-control" id="soundToggleBtn" onclick="toggleSoundPref()" title="Toggle sound effects">
+                    🔊
+                </button>
+
+                <!-- Font Sizer Menu -->
+                <div class="font-sizer-menu">
+                    <button class="btn-control" id="fontToggleBtn" onclick="toggleFontPopup()" title="Scale text size">
+                        A±
+                    </button>
+                    <div class="font-popup" id="fontPopup">
+                        <button id="font_small">Small Text</button>
+                        <button id="font_medium">Medium Text</button>
+                        <button id="font_large">Large Text</button>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <button class="btn-control" onclick="toggleTheme()" title="Toggle Dark/Light style mode">
+                    🌓
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Core Pages Body Content -->
+    <main class="app-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Learn HTML from Zero to Hero</h1>
+            <p>Master HyperText Markup Language inside our local sandbox. Code, test, and quiz yourself on-the-go offline!</p>
+            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                <a href="lessons.html" class="btn btn-success">Start Learning 🚀</a>
+                <button class="btn btn-secondary" onclick="openCheatSheet()">Open Cheat Sheet 📖</button>
+            </div>
+        </section>
+
+        <!-- Stats and Progress Rows -->
+        <div class="grid-2">
+            <!-- Learning Statistics Dashboard Card -->
+            <div class="card">
+                <h3 style="margin-bottom: 12px; color: var(--primary);">Your Dashboard Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-val" id="statsCompleted">0/17</div>
+                        <div class="stat-lbl">Lessons</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="statsQuizAvg">0%</div>
+                        <div class="stat-lbl">Quiz Average</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="statsStreak">0 🔥</div>
+                        <div class="stat-lbl">Streak Days</div>
+                    </div>
+                </div>
+                <!-- Linear progress indicator -->
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px;">
+                        <span>Program Completion</span>
+                        <strong id="statsProgressPct">0%</strong>
+                    </div>
+                    <div style="height: 10px; background: var(--tab-inactive); border-radius: 5px; overflow: hidden;">
+                        <div id="statsProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.4s;"></div>
+                    </div>
+                </div>
+
+                <!-- Daily Lesson Goal Card integration -->
+                <div style="margin-top: 20px; border-top: 1px dashed var(--border-glass); padding-top: 16px;" id="dailyGoalContainer">
+                    <div id="dailyGoalViewRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+                            🎯 Daily Goal: <span id="dailyGoalText">0/3</span> completed
+                        </span>
+                        <button class="btn btn-secondary btn-small" onclick="toggleDailyGoalEdit(true)" style="padding: 4px 10px; font-size: 0.72rem; min-height: auto; border-radius: 8px; margin: 0;" id="changeGoalBtn">
+                            Set Goal ⚙️
+                        </button>
+                    </div>
+
+                    <div id="dailyGoalEditRow" style="display: none; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size: 0.82rem; color: var(--text-muted); flex: 1;">Target lessons today:</span>
+                        <input type="number" id="dailyGoalInput" min="1" max="17" value="3" style="width: 60px; padding: 6px; border-radius: 8px; border: 1px solid var(--border-glass); background: var(--input-bg); color: var(--text-main); text-align: center; font-weight: bold;">
+                        <button class="btn btn-success btn-small" onclick="saveDailyGoalSelection()" style="padding: 6px 10px; min-height: auto; border-radius: 8px; font-size: 0.75rem; margin: 0;">Save</button>
+                        <button class="btn btn-secondary btn-small" onclick="toggleDailyGoalEdit(false)" style="padding: 6px 10px; min-height: auto; border-radius: 8px; font-size: 0.75rem; margin: 0;">✕</button>
+                    </div>
+
+                    <div style="height: 10px; background: var(--tab-inactive); border-radius: 5px; overflow: hidden; margin-bottom: 6px;">
+                        <div id="dailyGoalProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--success), #24A148); transition: width 0.4s;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
+                        <span id="dailyGoalPhrase" style="font-weight: 500;">Let's finish your daily goal!</span>
+                        <strong id="dailyGoalPercent">0%</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Lesson of the Day -->
+            <div class="card" id="featuredLessonCard">
+                <h3 style="color: var(--secondary); margin-bottom: 8px;">Featured Lesson of the Day 📅</h3>
+                <p id="featuredTitle" style="font-weight: 700; font-size: 1.15rem; margin-bottom: 6px;">Loading HTML tags...</p>
+                <p id="featuredDesc" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Let's explore building interactive hyperlinks & formatting tags properly today.</p>
+                <button class="btn btn-block" onclick="launchFeaturedLesson()">Jump To Lesson ⚡</button>
+            </div>
+        </div>
+
+        <!-- Bonus Feature: Typing Practice Game -->
+        <section class="card">
+            <h3 style="color: var(--success); margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                <span>⌨️ HTML Tag Typing Gym</span>
+                <span style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.15); padding: 4px 8px; border-radius: 6px;">Speed Practice</span>
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 15px;">Boost your syntax muscle memory. Type the HTML segment shown exactly as formatted:</p>
+            
+            <div class="typing-box" id="typingRefBox"></div>
+            
+            <input type="text" id="typingInputField" class="btn btn-secondary btn-block" style="text-align: left; background: var(--input-bg); font-family: monospace; font-size: 1rem; border: 1px solid var(--border-glass);" placeholder="Type syntax here..." autofocus autocomplete="off" spellcheck="false">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.82rem;">
+                <span id="typingFeedback" style="font-weight: 600;">Correct score streak: <strong id="typingStreakCount" style="color: var(--success);">0</strong></span>
+                <button class="btn btn-secondary btn-small" onclick="skipTypingTag()">Skip Tag ➡️</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Cheat Sheet Modal Drawer -->
+    <div class="modal" id="cheatSheetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: var(--primary);">HTML Tag Reference Cheat Sheet</h3>
+                <button class="btn btn-secondary btn-small" onclick="closeCheatSheet()" style="min-height:36px; border-radius: 50%; font-weight:900;">✕</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 15px;">Quick copy references for structures, forms, lists, and semantic HTML layouts:</p>
+                
+                <h4 style="margin-top: 15px; border-bottom: 1px solid var(--border-glass); padding-bottom: 4px;">Document Base</h4>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px; font-size: 0.85rem; margin-top: 8px;">
+                    <code>&lt;!DOCTYPE html&gt;</code> <span>Informs browser of HTML5 version.</span>
+                    <code>&lt;html&gt;</code> <span>The master folder wrapper.</span>
+                    <code>&lt;head&gt;</code> <span>Houses web title, metatags config, and styles.</span>
+                    <code>&lt;body&gt;</code> <span>Holds main visible webpage content.</span>
+                </div>
+
+                <h4 style="margin-top: 15px; border-bottom: 1px solid var(--border-glass); padding-bottom: 4px;">Text Formatting</h4>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px; font-size: 0.85rem; margin-top: 8px;">
+                    <code>&lt;h1&gt; to &lt;h6&gt;</code> <span>Heading levels 1 (largest) down to 6.</span>
+                    <code>&lt;p&gt;</code> <span>Creates standard text spacing paragraphs.</span>
+                    <code>&lt;br&gt;</code> <span>Forces a single line break in body text.</span>
+                    <code>&lt;strong&gt;</code> <span>Displays text characters in heavy bold.</span>
+                    <code>&lt;em&gt;</code> <span>Formats letters in italics.</span>
+                    <code>&lt;mark&gt;</code> <span>Highlights target selection in yellow neon.</span>
+                </div>
+
+                <h4 style="margin-top: 15px; border-bottom: 1px solid var(--border-glass); padding-bottom: 4px;">Tables & Columns</h4>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px; font-size: 0.85rem; margin-top: 8px;">
+                    <code>&lt;table&gt;</code> <span>Declares grid table outline.</span>
+                    <code>&lt;tr&gt;</code> <span>Specifies an individual table row.</span>
+                    <code>&lt;td&gt;</code> <span>Houses a standard row data cell.</span>
+                    <code>&lt;th&gt;</code> <span>Table grid headings (centered + bold).</span>
+                    <code>colspan="X"</code> <span>Merge cell horizontally across columns.</span>
+                </div>
+
+                <h4 style="margin-top: 15px; border-bottom: 1px solid var(--border-glass); padding-bottom: 4px;">Interactive Forms</h4>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px; font-size: 0.85rem; margin-top: 8px;">
+                    <code>&lt;form&gt;</code> <span>Container wrapping inputs and dispatcher.</span>
+                    <code>&lt;input type="X"&gt;</code> <span>Inputs like text, password, and email.</span>
+                    <code>&lt;textarea&gt;</code> <span>Larger text boxes for review comments.</span>
+                    <code>&lt;select&gt;</code> <span>Initializes dropdown popup drawer lists.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCheatSheet()">Dismiss Reference</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Navigation Bar for Mobile -->
+    <nav class="nav-mobile">
+        <a href="index.html" class="nav-mobile-item active">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <span>Home</span>
+        </a>
+        <a href="lessons.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.89 12.5L12 15.83l6.11-3.33L12 9.17 5.89 12.5z"/>
+            </svg>
+            <span>Lessons</span>
+        </a>
+        <a href="playground.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+            </svg>
+            <span>Playground</span>
+        </a>
+        <a href="quiz.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+            <span>Quiz</span>
+        </a>
+        <a href="progress.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/>
+            </svg>
+            <span>Progress</span>
+        </a>
+    </nav>
+
+    <!-- Load scripts in logical order -->
+    <script src="js/lessons.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        // Home Screen Logic
+        let selectedFeaturedLessonId = "l1_intro";
+
+        function updateStatsDisplay() {
+            // Completed lesson counts
+            const total = HTML_LESSONS.length;
+            const done = completedLessons.length;
+            document.getElementById("statsCompleted").textContent = `${done}/${total}`;
+            
+            // Percentage Bar calculation
+            const pct = Math.round((done / total) * 100);
+            document.getElementById("statsProgressPct").textContent = `${pct}%`;
+            document.getElementById("statsProgressBar").style.width = `${pct}%`;
+
+            // Quiz Average
+            if (quizScores.length > 0) {
+                const sum = quizScores.reduce((a, b) => a + b, 0);
+                const avg = Math.round(sum / quizScores.length);
+                document.getElementById("statsQuizAvg").textContent = `${avg}%`;
+            } else {
+                document.getElementById("statsQuizAvg").textContent = "N/A";
+            }
+
+            // Streak Day
+            document.getElementById("statsStreak").textContent = `${userStreak} 🔥`;
+
+            // Daily Goal Display Updates
+            updateDailyGoalDisplay();
+        }
+
+        function updateDailyGoalDisplay() {
+            const completedToday = getLessonsCompletedTodayCount();
+            const dailyGoal = getDailyGoal();
+            
+            document.getElementById("dailyGoalText").textContent = `${completedToday}/${dailyGoal}`;
+            document.getElementById("dailyGoalInput").value = dailyGoal;
+            
+            const pct = dailyGoal > 0 ? Math.round((completedToday / dailyGoal) * 100) : 0;
+            const barPct = Math.min(100, pct);
+            
+            document.getElementById("dailyGoalPercent").textContent = `${pct}%`;
+            document.getElementById("dailyGoalProgressBar").style.width = `${barPct}%`;
+            
+            const phraseSpan = document.getElementById("dailyGoalPhrase");
+            if (pct >= 100) {
+                phraseSpan.innerHTML = "🎉 <strong style='color: var(--success);'>Goal Achieved today! Good job!</strong>";
+                document.getElementById("dailyGoalProgressBar").style.background = "linear-gradient(90deg, #24A148, #1E8239)";
+            } else if (pct >= 50) {
+                phraseSpan.textContent = "More than halfway there! Keep it up!";
+                document.getElementById("dailyGoalProgressBar").style.background = "linear-gradient(90deg, var(--success), #24A148)";
+            } else {
+                phraseSpan.textContent = "Let's finish your daily goal!";
+                document.getElementById("dailyGoalProgressBar").style.background = "linear-gradient(90deg, var(--success), #24A148)";
+            }
+        }
+
+        function toggleDailyGoalEdit(show) {
+            document.getElementById("dailyGoalViewRow").style.display = show ? "none" : "flex";
+            document.getElementById("dailyGoalEditRow").style.display = show ? "flex" : "none";
+            if (show) {
+                document.getElementById("dailyGoalInput").focus();
+            }
+        }
+
+        function saveDailyGoalSelection() {
+            const val = parseInt(document.getElementById("dailyGoalInput").value);
+            if (isNaN(val) || val < 1) {
+                showToast("Please enter a valid goal (1 or more).", "danger");
+                return;
+            }
+            if (val > HTML_LESSONS.length) {
+                showToast(`Daily goal set to ${val} (higher than total catalog of ${HTML_LESSONS.length}).`, "warning");
+            }
+            setDailyGoal(val);
+            toggleDailyGoalEdit(false);
+            showToast(`Daily Goal set to ${val} lessons! 🎯`, "success");
+            playCorrectSound();
+        }
+
+        window.addEventListener("dailyGoalUpdated", () => {
+            // Retrieve latest global variables
+            completedLessons = JSON.parse(localStorage.getItem("html_completed_lessons") || "[]");
+            updateStatsDisplay();
+        });
+
+        function setFeaturedLesson() {
+            // Pick a lesson dynamically based on weekday index
+            const dayOfIndex = new Date().getDay();
+            const featuredIndex = dayOfIndex % HTML_LESSONS.length;
+            const lesson = HTML_LESSONS[featuredIndex];
+            
+            if (lesson) {
+                selectedFeaturedLessonId = lesson.id;
+                document.getElementById("featuredTitle").textContent = lesson.title;
+                document.getElementById("featuredDesc").textContent = lesson.desc;
+            }
+        }
+
+        function launchFeaturedLesson() {
+            // Save selection dynamically and redirect to lessons.html opening modal directly!
+            localStorage.setItem("launch_lesson_id", selectedFeaturedLessonId);
+            window.location.href = "lessons.html";
+        }
+
+        // Tag Typing Practice mechanics
+        const TYPING_TAGS_POOL = [
+            "<h1>Title</h1>",
+            "<p>Writing text</p>",
+            "<strong>Important</strong>",
+            "<em>Emphasis</em>",
+            "<hr>",
+            "<br>",
+            "<ul><li>A</li></ul>",
+            "<ol><li>B</li></ol>",
+            "<a href='url'>Link</a>",
+            "<img src='img.jpg' alt='tag'>",
+            "<table border='1'></table>",
+            "<tr><td>Cell</td></tr>",
+            "<input type='text'>",
+            "<textarea rows='3'></textarea>",
+            "<button type='submit'>Run</button>",
+            "<header></header>",
+            "<nav><a href='#'>Index</a></nav>",
+            "<iframe src='blank'></iframe>",
+            "<video controls></video>",
+            "<sub>subscript</sub>"
+        ];
+
+        let targetTypingString = "";
+        let currentTypingStreak = parseInt(localStorage.getItem("typing_game_streak") || "0");
+
+        function initTypingChallenge() {
+            const index = Math.floor(Math.random() * TYPING_TAGS_POOL.length);
+            targetTypingString = TYPING_TAGS_POOL[index];
+            document.getElementById("typingRefBox").textContent = targetTypingString;
+            document.getElementById("typingInputField").value = "";
+            document.getElementById("typingStreakCount").textContent = currentTypingStreak;
+        }
+
+        function skipTypingTag() {
+            currentTypingStreak = 0;
+            localStorage.setItem("typing_game_streak", "0");
+            initTypingChallenge();
+            showToast("Tag skipped correctly.", "warning");
+        }
+
+        // Input checks as typing proceeds
+        document.getElementById("typingInputField").addEventListener("input", function(e) {
+            const inputVal = e.target.value;
+            const refText = targetTypingString;
+            
+            // Compare characters
+            if (inputVal === refText) {
+                currentTypingStreak += 1;
+                localStorage.setItem("typing_game_streak", currentTypingStreak.toString());
+                playCorrectSound();
+                showToast("Perfect match! 🔥", "success");
+                initTypingChallenge();
+            } else if (refText.startsWith(inputVal)) {
+                // Keep input field standard style
+                document.getElementById("typingRefBox").innerHTML = `<span class="typing-cursor">${refText.slice(0, inputVal.length)}</span>${refText.slice(inputVal.length)}`;
+            } else {
+                // highlight syntax errors visually in red
+                document.getElementById("typingRefBox").innerHTML = `<span class="typing-incorrect">${refText.slice(0, inputVal.length)}</span>${refText.slice(inputVal.length)}`;
+                playTone(150, "sine", 0.05); // light mistake sound
+            }
+        });
+
+        // Cheat Sheet control modals
+        function openCheatSheet() {
+            document.getElementById("cheatSheetModal").classList.add("show");
+            playTone(450, "sine", 0.08);
+        }
+
+        function closeCheatSheet() {
+            document.getElementById("cheatSheetModal").classList.remove("show");
+            playTone(350, "sine", 0.08);
+        }
+
+        // Set Sound pref
+        function toggleSoundPref() {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem("html_sound_enabled", soundEnabled.toString());
+            const btn = document.getElementById("soundToggleBtn");
+            if (soundEnabled) {
+                btn.textContent = "🔊";
+                showToast("Synthesized sounds enabled!", "success");
+                playTone(440, "sine", 0.1);
+            } else {
+                btn.textContent = "🔇";
+                showToast("Sounds muted.", "warning");
+            }
+        }
+
+        function initSoundButtonText() {
+            const btn = document.getElementById("soundToggleBtn");
+            if (btn) {
+                btn.textContent = soundEnabled ? "🔊" : "🔇";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateStreak();
+            updateStatsDisplay();
+            setFeaturedLesson();
+            initTypingChallenge();
+            initSoundButtonText();
+        });
+    </script>
+</body>
+</html>

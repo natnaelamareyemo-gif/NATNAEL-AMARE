@@ -1,0 +1,6 @@
+{
+  "name": "Learn HTML",
+  "description": "Learn HTML from zero to hero with step-by-step interactive lessons, a real-time code playground, level-by-level trivia quizzes, and detailed progress tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

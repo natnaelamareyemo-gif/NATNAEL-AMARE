@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn HTML - Code Playground</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Immersive Playground overrides */
+        .play-row {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: calc(100vh - 180px);
+            min-height: 500px;
+        }
+        .play-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-md);
+        }
+        .editor-panel {
+            background: var(--code-bg);
+        }
+        .preview-panel {
+            background: white;
+            color: black;
+        }
+        .play-header {
+            background: rgba(0,0,0,0.15);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .play-textarea {
+            width: 100%;
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--code-text);
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            padding: 18px;
+            resize: none;
+            outline: none;
+            line-height: 1.55;
+        }
+        .preview-frame {
+            width: 100%;
+            flex: 1;
+            border: none;
+            background: white;
+        }
+        /* Mobile vs desktop layout styling */
+        @media (min-width: 1024px) {
+            .play-row {
+                flex-direction: row;
+            }
+        }
+        /* Fullscreen Preview class toggles */
+        .fullscreen-preview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 9999;
+            border-radius: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span>Learn HTML</span>
+            </div>
+            <nav class="nav-desktop">
+                <a href="index.html">Home</a>
+                <a href="lessons.html">Lessons</a>
+                <a href="playground.html" class="active">Playground</a>
+                <a href="quiz.html">Quiz</a>
+                <a href="progress.html">Progress</a>
+            </nav>
+            <div class="header-controls">
+                <button class="btn-control" onclick="toggleTheme()" title="Toggle Dark Mode">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Content Area -->
+    <main class="app-content" style="padding-bottom: 95px;">
+        <!-- Controls Bar row -->
+        <section class="card" style="padding: 14px 18px; margin-bottom: 16px;">
+            <div style="display: flex; gap: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                
+                <!-- Quick template selector dropdown  -->
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <label style="font-size: 0.85rem; font-weight:700;">Template:</label>
+                    <select id="templateDropdown" class="btn btn-secondary btn-small" onchange="loadSelectedTemplate()" style="padding: 6px 10px; min-height: 38px;">
+                        <option value="basic">Classic Page</option>
+                        <option value="form">Sign-In Form</option>
+                        <option value="table">Data Table</option>
+                        <option value="card">Glass Card</option>
+                        <option value="navbar">Navigation Bar</option>
+                    </select>
+                </div>
+
+                <!-- Core Utilities workspace buttons -->
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary btn-small" onclick="promptSaveSnippet()" title="Save local snippet">
+                        💾 Save snippet
+                    </button>
+                    <button class="btn btn-secondary btn-small" id="copyCodeBtn" onclick="copyWorkspaceCode()" title="Copy entire code spec">
+                        📋 Copy Code
+                    </button>
+                    <button class="btn btn-danger btn-small" onclick="resetActiveWorkspace()" title="Clear editor content">
+                        🧹 Reset
+                    </button>
+                    <button class="btn btn-primary btn-small" onclick="toggleFullscreenCanvas()" title="Toggle Fullscreen preview">
+                        🖥️ Fullscreen
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Workspace split frame -->
+        <div class="play-row">
+            <!-- Left Code editor panel -->
+            <div class="play-panel editor-panel">
+                <div class="play-header">
+                    <span>📝 Live Code Editor (HTML Code only)</span>
+                    <span style="color:#60a5fa; font-size:0.75rem;">Interactive Sandbox</span>
+                </div>
+                <textarea id="playgroundTextarea" class="play-textarea" placeholder="<!-- Write your HTML templates here... -->" autocomplete="off" spellcheck="false" autofocus></textarea>
+            </div>
+
+            <!-- Right Render box -->
+            <div class="play-panel preview-panel" id="previewPanelWrapper">
+                <div class="play-header" style="background: #cbd5e1; color:#1e293b;">
+                    <span>🌐 Instant Canvas Output</span>
+                    <button id="exitFullscreenBtn" onclick="toggleFullscreenCanvas()" style="display: none; background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 4px; pointer-events: auto; cursor: pointer;">
+                        Exit Fullscreen
+                    </button>
+                </div>
+                <iframe id="playgroundIframe" class="preview-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- Custom Snippets browser section -->
+        <section class="card" style="margin-top: 24px;">
+            <h3 style="color: var(--secondary); margin-bottom: 12px;">Saved Snippets Drawer 📁</h3>
+            <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 15px;">Review, launch, or manage your custom-saved CSS/HTML coding mockups:</p>
+            <div id="snippetsListGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                <!-- Dynamically populated snippets names list -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Local Snippet Name Dialog Modal -->
+    <div class="modal" id="saveSnippetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Save Custom Workspace Snippet</h3>
+                <button class="btn btn-secondary btn-small" onclick="closeSaveSnippetModal()" style="min-height:36px; border-radius:50%; width: 40px;">✕</button>
+            </div>
+            <div class="modal-body">
+                <label for="snippetNameInput" style="display:block; margin-bottom: 6px; font-weight:700;">Snippet Label Name:</label>
+                <input type="text" id="snippetNameInput" class="btn btn-secondary btn-block" style="text-align:left; background: var(--input-bg); border: 1px solid var(--border-glass);" placeholder="My pricing card design...">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSaveSnippetModal()">Cancel</button>
+                <button class="btn btn-success" onclick="commitSaveSnippet()">Confirm Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Navigation Bar for Mobile -->
+    <nav class="nav-mobile">
+        <a href="index.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="lessons.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.89 12.5L12 15.83l6.11-3.33L12 9.17 5.89 12.5z"/></svg>
+            <span>Lessons</span>
+        </a>
+        <a href="playground.html" class="nav-mobile-item active">
+            <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+            <span>Playground</span>
+        </a>
+        <a href="quiz.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            <span>Quiz</span>
+        </a>
+        <a href="progress.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+            <span>Progress</span>
+        </a>
+    </nav>
+
+    <!-- Load playground libraries -->
+    <script src="js/playground.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        let isFullScreen = false;
+
+        // Render code into workspace target iframe
+        function renderPlaygroundPreview() {
+            const inputVal = document.getElementById("playgroundTextarea").value;
+            const iframe = document.getElementById("playgroundIframe");
+            if (iframe) {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                doc.open();
+                doc.write(inputVal);
+                doc.close();
+            }
+        }
+
+        // Dropdown actions to load basic templates
+        function loadSelectedTemplate() {
+            const dropdown = document.getElementById("templateDropdown");
+            const selectVal = dropdown.value;
+            const targetCode = PLAYGROUND_TEMPLATES[selectVal];
+            
+            if (targetCode) {
+                document.getElementById("playgroundTextarea").value = targetCode;
+                renderPlaygroundPreview();
+                showToast(`Loaded ${selectVal.toUpperCase()} template! 🚀`, "success");
+                playTone(500, "sine", 0.08);
+            }
+        }
+
+        function resetActiveWorkspace() {
+            const dropdown = document.getElementById("templateDropdown");
+            const selectVal = dropdown.value;
+            const targetCode = PLAYGROUND_TEMPLATES[selectVal] || "";
+            document.getElementById("playgroundTextarea").value = targetCode;
+            renderPlaygroundPreview();
+            showToast("Workspace code cleared & reset.", "warning");
+            playTone(250, "sine", 0.1);
+        }
+
+        function copyWorkspaceCode() {
+            const code = document.getElementById("playgroundTextarea").value;
+            copyToClipboard(code, "copyCodeBtn");
+        }
+
+        // Fullscreen Toggle
+        function toggleFullscreenCanvas() {
+            const wrap = document.getElementById("previewPanelWrapper");
+            const cancelBtn = document.getElementById("exitFullscreenBtn");
+            
+            isFullScreen = !isFullScreen;
+            if (isFullScreen) {
+                wrap.classList.add("fullscreen-preview");
+                cancelBtn.style.display = "block";
+                playTone(600, "sine", 0.1);
+            } else {
+                wrap.classList.remove("fullscreen-preview");
+                cancelBtn.style.display = "none";
+                playTone(400, "sine", 0.08);
+            }
+        }
+
+        // Snippets Modal configuration
+        function promptSaveSnippet() {
+            document.getElementById("saveSnippetModal").classList.add("show");
+            playTone(450, "sine", 0.08);
+        }
+
+        function closeSaveSnippetModal() {
+            document.getElementById("saveSnippetModal").classList.remove("show");
+            playTone(300, "sine", 0.05);
+        }
+
+        function commitSaveSnippet() {
+            const labelInput = document.getElementById("snippetNameInput").value.trim();
+            const textCode = document.getElementById("playgroundTextarea").value;
+            
+            if (!labelInput) {
+                showToast("Please enter a valid label for your snippet.", "danger");
+                return;
+            }
+
+            saveSnippet(labelInput, textCode);
+            closeSaveSnippetModal();
+            document.getElementById("snippetNameInput").value = "";
+            showToast(`Snippet "${labelInput}" saved securely! 💾`, "success");
+            playCorrectSound();
+            renderSnippetsDrawer();
+        }
+
+        // Render Local snippets list
+        function renderSnippetsDrawer() {
+            const container = document.getElementById("snippetsListGrid");
+            container.innerHTML = "";
+
+            const keys = Object.keys(savedSnippets);
+            if (keys.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 15px; border: 1px dashed var(--border-glass); border-radius: 12px;">
+                        No custom snippets saved yet. Create some above!
+                    </div>
+                `;
+                return;
+            }
+
+            keys.forEach(key => {
+                const labelBox = document.createElement("div");
+                labelBox.className = "stat-box";
+                labelBox.style.textAlign = "left";
+                labelBox.style.padding = "10px";
+                labelBox.style.display = "flex";
+                labelBox.style.flexDirection = "column";
+                labelBox.style.justifyContent = "space-between";
+                labelBox.style.gap = "8px";
+
+                labelBox.innerHTML = `
+                    <div>
+                        <strong style="font-size: 0.88rem; color: var(--primary); display:block; word-break: break-all;">${key}</strong>
+                        <span style="font-size: 0.72rem; color: var(--text-muted);">Saved Locally</span>
+                    </div>
+                    <div style="display:flex; gap: 4px;">
+                        <button class="btn btn-secondary btn-small" onclick="loadSnippetIntoWorkspace('${key}')" style="flex:1; padding: 4px; min-height: 28px; font-size: 0.75rem;">Load</button>
+                        <button class="btn btn-danger btn-small" onclick="removeIndexedSnippet('${key}')" style="padding: 4px; min-height: 28px; width: 32px; font-size:0.75rem;">✕</button>
+                    </div>
+                `;
+                container.appendChild(labelBox);
+            });
+        }
+
+        function loadSnippetIntoWorkspace(key) {
+            const code = savedSnippets[key];
+            if (code) {
+                document.getElementById("playgroundTextarea").value = code;
+                renderPlaygroundPreview();
+                showToast(`Loaded Custom: "${key}" 🚀`, "success");
+                playTone(550, "sine", 0.08);
+            }
+        }
+
+        function removeIndexedSnippet(key) {
+            if (confirm(`Are you sure you want to delete the snippet "${key}"?`)) {
+                deleteSnippet(key);
+                renderSnippetsDrawer();
+                showToast(`Snippet "${key}" deleted.`, "warning");
+                playTone(300, "sine", 0.1);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Check if there's code transmitted from a lesson modal, otherwise fall back to basic template code!
+            const transmitCode = localStorage.getItem("playground_load_code");
+            if (transmitCode) {
+                document.getElementById("playgroundTextarea").value = transmitCode;
+                localStorage.removeItem("playground_load_code");
+                showToast("Imported code from lesson study!", "success");
+            } else {
+                // load first template as default content
+                document.getElementById("playgroundTextarea").value = PLAYGROUND_TEMPLATES.basic;
+            }
+
+            renderPlaygroundPreview();
+            renderSnippetsDrawer();
+
+            // Link keyboard inputs to real-time rendering
+            document.getElementById("playgroundTextarea").addEventListener("input", renderPlaygroundPreview);
+        });
+    </script>
+</body>
+</html>

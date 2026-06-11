@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn HTML - Levels Quiz Challenge</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Embed layout overrides for Quiz metrics */
+        .option-icon {
+            font-size: 1.15rem;
+            width: 24px;
+            display: inline-block;
+        }
+        /* Certificate graphics block */
+        .certificate-sheet {
+            background: linear-gradient(135deg, #1E1B4B 0%, #311042 100%);
+            border: 8px double #D97706;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: #FEF3C7;
+            max-width: 580px;
+            margin: 20px auto;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+        }
+        .cert-stamp {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 80px;
+            height: 80px;
+            background: #D97706;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 900;
+            transform: rotate(-10deg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px dashed #FEF3C7;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span>Learn HTML</span>
+            </div>
+            <nav class="nav-desktop">
+                <a href="index.html">Home</a>
+                <a href="lessons.html">Lessons</a>
+                <a href="playground.html">Playground</a>
+                <a href="quiz.html" class="active">Quiz</a>
+                <a href="progress.html">Progress</a>
+            </nav>
+            <div class="header-controls">
+                <button class="btn-control" onclick="toggleTheme()" title="Toggle Dark Mode">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Content Wrapper -->
+    <main class="app-content" style="padding-bottom: 95px;">
+        
+        <!-- STEP 1: LOGIN / QUIZ CONFIGURATION OVERVIEW -->
+        <section class="card" id="quizWelcomeScreen">
+            <h2 style="color: var(--primary); margin-bottom: 8px; text-align:center;">Levels Trivia Arena 🧠</h2>
+            <p style="text-align:center; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">
+                Test your HTML structures, forms elements, and semantic markup coding skills. Reach <strong>80% Score</strong> to claim a printable Diploma!
+            </p>
+
+            <div style="max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <label for="learnerNameInput" style="display:block; margin-bottom: 6px; font-weight:700; font-size:0.9rem;">
+                        Your Full Name (For Certificate):
+                    </label>
+                    <input type="text" id="learnerNameInput" class="btn btn-secondary btn-block" style="text-align:left; background: var(--input-bg); border-color: var(--primary); font-size:1rem;" placeholder="e.g. Natnael Amare">
+                </div>
+
+                <div>
+                    <label style="display:block; margin-bottom: 8px; font-weight: 700; font-size:0.9rem;">Target Lesson Filters:</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display:flex; align-items:center; gap: 10px; cursor:pointer; font-size:0.92rem;">
+                            <input type="radio" name="quizTier" value="all" checked style="width:18px; height:18px;">
+                            <span>Comprehensive (All 30 Level Questions)</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap: 10px; cursor:pointer; font-size:0.92rem;">
+                            <input type="radio" name="quizTier" value="l1" style="width:18px; height:18px;">
+                            <span>Level 1 Core (Basics only)</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap: 10px; cursor:pointer; font-size:0.92rem;">
+                            <input type="radio" name="quizTier" value="l4l5" style="width:18px; height:18px;">
+                            <span>Forms & Advanced (Levels 4 & 5 only)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-success btn-block" onclick="startQuizChallenge()" style="margin-top: 10px; font-size:1.05rem;">
+                    Launch Quiz Challenge ⚡
+                </button>
+            </div>
+        </section>
+
+        <!-- STEP 2: ACTIVE TRIVIA GAMEPLAY -->
+        <section class="card" id="quizGameplayScreen" style="display: none;">
+            <!-- Quiz Timeline header progress indicator bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 8px;">
+                <span id="quizTimelineText">Active Question: 1/30</span>
+                <span id="quizTimelinePercent">3%</span>
+            </div>
+            <div class="quiz-timeline">
+                <div class="quiz-prog" id="quizTimelineFill"></div>
+            </div>
+
+            <!-- Question and Options layout area -->
+            <div style="margin-bottom: 24px;">
+                <span class="lesson-badge badge-basics" style="margin-bottom: 8px; display:inline-block;" id="gameplayLevelBadge">Level 1</span>
+                <h3 id="gameplayQuestionText" style="color: var(--text-main); line-height:1.4; font-size:1.15rem; margin-bottom: 16px;">
+                    Question Text details go here?
+                </h3>
+                
+                <div id="gameplayOptionsGroup">
+                    <!-- Option buttons are dynamically injected here -->
+                </div>
+            </div>
+
+            <!-- Retroactive explanation reveal box -->
+            <div class="card" id="gameplayExplanationBox" style="display: none; background: var(--bg-app); border-color: var(--primary); margin-bottom:20px; padding: 16px;">
+                <h4 style="color: var(--primary); margin-bottom: 6px;" id="explanationHeader">Review Lesson Details</h4>
+                <p id="gameplayExplanationText" style="font-size: 0.9rem; line-height:1.5;">
+                    Answer explicator goes here...
+                </p>
+            </div>
+
+            <button class="btn btn-block btn-accent" id="gameplayNextBtn" onclick="advanceQuizQuestion()" style="display: none;">
+                Next Question ➔
+            </button>
+        </section>
+
+        <!-- STEP 3: SUMMARY SCORES AND COMPLETION CERTIFICATE -->
+        <section id="quizResultsScreen" style="display: none;">
+            <div class="card" style="text-align: center;">
+                <span style="font-size: 3.5rem; display:block; margin-bottom: 15px;" id="resultsIcon">🏆</span>
+                <h2 style="color: var(--primary); margin-bottom: 8px;">Challenge Complete!</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+                    Congratulations <strong id="resultsLearnerName">Natnael</strong>, you have finished your testing challenge segment.
+                </p>
+
+                <!-- Gigantic Stats Metrics circles -->
+                <div style="display: flex; justify-content: space-around; gap: 16px; margin-bottom: 24px;">
+                    <div>
+                        <div style="font-size: 2.2rem; font-weight: 800; color: var(--success);" id="resultsScorePct">0%</div>
+                        <div style="font-size: 0.75rem; text-transform:uppercase; color: var(--text-muted);">Quiz score</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2.2rem; font-weight: 800; color: var(--secondary);" id="resultsAccuracyText">0/30</div>
+                        <div style="font-size: 0.75rem; text-transform:uppercase; color: var(--text-muted);">Accuracy</div>
+                    </div>
+                </div>
+
+                <div id="resultsCertificateTriggerArea" style="display: none;">
+                    <p style="font-size:0.85rem; color: var(--success); font-weight: 700; margin-bottom: 12px;">
+                        🎉 Outstanding Achievement! You scored over 80%. Here is your Graduation Seal:
+                    </p>
+                    <button class="btn btn-success" onclick="toggleCertificateDisplay()" style="margin-bottom: 15px;">
+                        View Completion Diploma 📜
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
+                    <button class="btn btn-secondary" onclick="resetAnswersChallenge()">Re-take Quiz 🔄</button>
+                    <a href="playground.html" class="btn btn-secondary">Sandbox Playground</a>
+                </div>
+            </div>
+
+            <!-- Dynamic completions Certificate Drawer -->
+            <div id="certDrawerWrapper" style="display: none;">
+                <div class="certificate-sheet" id="printTargetCertificate">
+                    <span style="font-size: 1.4rem; color: #D97706; font-weight: 800; letter-spacing: 2px; text-transform:uppercase; display:block; margin-bottom:12px;">Certificate of HTML Completion</span>
+                    <hr style="border:none; height:2px; background: #D97706; width:60%; margin:0 auto 20px;">
+                    
+                    <p style="font-style: italic; font-size: 0.88rem; margin-bottom: 15px;">This diploma proudly grants the title of HTML Master to</p>
+                    <h2 style="font-size: 2.2rem; color: white; margin-bottom: 15px; text-shadow: 0 2px 4px #000;" id="certStudentName">Natnael Amare</h2>
+                    
+                    <p style="font-size: 0.88rem; line-height: 1.6; max-width: 440px; margin: 0 auto 20px;">
+                        For outstanding persistence and successful score evaluation in completing the comprehensive HTML coding sandbox modules.
+                    </p>
+                    
+                    <div style="display: flex; justify-content: space-around; border-top: 1px dashed #D97706; padding-top: 15px; font-size:0.75rem;">
+                        <div>
+                            <span>VERIFIED GRADE:</span><br>
+                            <strong style="color: white; font-size:1.1rem;" id="certAccuracyPercent">95%</strong>
+                        </div>
+                        <div>
+                            <span>DATE GRANTED:</span><br>
+                            <strong style="color: white; font-size:1.1rem;" id="certIssueDate">June 11, 2026</strong>
+                        </div>
+                    </div>
+
+                    <div class="cert-stamp">
+                        <span>HTML<br>SEAL</span>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <button class="btn btn-secondary btn-small" onclick="window.print()">🖨️ Print / Save PDF</button>
+                </div>
+            </div>
+
+            <!-- Incorrect answers checklist summary for student review -->
+            <div class="card" id="resultsMistakesSection" style="display: none;">
+                <h3 style="color: var(--danger); margin-bottom: 12px; border-bottom: 1px solid var(--border-glass); padding-bottom: 4px;">
+                    Review Incorrect Answers 🗒️
+                </h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 15px;">
+                    Study the tags you missed during this submission to improve your skills:
+                </p>
+                <div id="mistakesReviewGrid" style="display: flex; flex-direction: column; gap:16px;">
+                    <!-- Injected rows details -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Navigation Bar for Mobile -->
+    <nav class="nav-mobile">
+        <a href="index.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="lessons.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.89 12.5L12 15.83l6.11-3.33L12 9.17 5.89 12.5z"/></svg>
+            <span>Lessons</span>
+        </a>
+        <a href="playground.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+            <span>Playground</span>
+        </a>
+        <a href="quiz.html" class="nav-mobile-item active">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            <span>Quiz</span>
+        </a>
+        <a href="progress.html" class="nav-mobile-item">
+            <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+            <span>Progress</span>
+        </a>
+    </nav>
+
+    <!-- Load scripts in logical order -->
+    <script src="js/quiz.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        // State of active gameplay challenge
+        let activeQuestionsTier = [];
+        let currentIdx = 0;
+        let accurateCount = 0;
+        let incorrectTracker = []; // holds objects { question, userIndex, correctIndex }
+        let selectedName = "Student";
+        let isOptionLocked = false;
+
+        function startQuizChallenge() {
+            const nameBox = document.getElementById("learnerNameInput").value.trim();
+            selectedName = nameBox || "Student";
+            
+            // Choose radio filter selection
+            const tierVal = document.querySelector('input[name="quizTier"]:checked').value;
+            
+            if (tierVal === "l1") {
+                // levels 1 filtered
+                activeQuestionsTier = QUIZ_QUESTIONS.filter(q => q.level === 1);
+            } else if (tierVal === "l4l5") {
+                // levels 4 and 5 filtered
+                activeQuestionsTier = QUIZ_QUESTIONS.filter(q => q.level === 4 || q.level === 5);
+            } else {
+                // all 30 questions
+                activeQuestionsTier = QUIZ_QUESTIONS;
+            }
+
+            // Shuffle active subset
+            activeQuestionsTier.sort(() => Math.random() - 0.5);
+
+            // Reset States
+            currentIdx = 0;
+            accurateCount = 0;
+            incorrectTracker = [];
+
+            // Hide Welcome and Show gameplay
+            document.getElementById("quizWelcomeScreen").style.display = "none";
+            document.getElementById("quizGameplayScreen").style.display = "block";
+            document.getElementById("quizResultsScreen").style.display = "none";
+
+            playTone(520, "sine", 0.08);
+            showNotificationMessage(`Starting ${activeQuestionsTier.length} Question Challenge! 🚀`);
+            loadGameplayQuestion();
+        }
+
+        // Display individual question configurations
+        function loadGameplayQuestion() {
+            isOptionLocked = false;
+            
+            // Hide review tags
+            document.getElementById("gameplayExplanationBox").style.display = "none";
+            document.getElementById("gameplayNextBtn").style.display = "none";
+
+            const q = activeQuestionsTier[currentIdx];
+            if (!q) return;
+
+            // Header level badge
+            const badge = document.getElementById("gameplayLevelBadge");
+            badge.textContent = `Level ${q.level}`;
+            
+            // Question text
+            document.getElementById("gameplayQuestionText").innerHTML = q.question;
+
+            // Progress timeline triggers
+            const progressRatio = (currentIdx / activeQuestionsTier.length) * 100;
+            document.getElementById("quizTimelineFill").style.width = `${progressRatio}%`;
+            document.getElementById("quizTimelineText").innerHTML = `Active Question: <strong>${currentIdx + 1}/${activeQuestionsTier.length}</strong>`;
+            document.getElementById("quizTimelinePercent").textContent = `${Math.round(progressRatio)}%`;
+
+            // Draw options
+            const optionsGroup = document.getElementById("gameplayOptionsGroup");
+            optionsGroup.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                const button = document.createElement("button");
+                button.className = "quiz-option";
+                button.innerHTML = `
+                    <span class="option-icon" id="optIcon_${idx}">◯</span>
+                    <span>${opt}</span>
+                `;
+                button.onclick = () => chooseQuizOption(idx);
+                optionsGroup.appendChild(button);
+            });
+        }
+
+        function chooseQuizOption(selectedIndex) {
+            if (isOptionLocked) return;
+            isOptionLocked = true;
+
+            const q = activeQuestionsTier[currentIdx];
+            const correctIndex = q.answer;
+            const optionBtns = document.querySelectorAll("#gameplayOptionsGroup button");
+
+            // Evaluate answer
+            const isCorrect = (selectedIndex === correctIndex);
+            
+            optionBtns.forEach((btn, idx) => {
+                const icon = document.getElementById(`optIcon_${idx}`);
+                if (idx === correctIndex) {
+                    btn.classList.add("correct");
+                    icon.textContent = "✔";
+                } else if (idx === selectedIndex) {
+                    btn.classList.add("incorrect");
+                    icon.textContent = "✘";
+                }
+            });
+
+            if (isCorrect) {
+                accurateCount += 1;
+                playCorrectSound();
+                document.getElementById("explanationHeader").textContent = "Correct! ✨";
+                document.getElementById("explanationHeader").style.color = "var(--success)";
+            } else {
+                playIncorrectSound();
+                document.getElementById("explanationHeader").textContent = "Incorrect Solution";
+                document.getElementById("explanationHeader").style.color = "var(--danger)";
+                
+                // Track mistake
+                incorrectTracker.push({
+                    question: q,
+                    userIndex: selectedIndex,
+                    correctIndex: correctIndex
+                });
+            }
+
+            // Expose Explanations block
+            document.getElementById("gameplayExplanationText").innerHTML = q.explanation;
+            document.getElementById("gameplayExplanationBox").style.display = "block";
+            document.getElementById("gameplayNextBtn").style.display = "block";
+        }
+
+        function advanceQuizQuestion() {
+            currentIdx += 1;
+            if (currentIdx < activeQuestionsTier.length) {
+                loadGameplayQuestion();
+                playTone(480, "sine", 0.05);
+            } else {
+                finishGameplayChallenge();
+            }
+        }
+
+        // Summary Calculations & Certificate grants
+        function finishGameplayChallenge() {
+            const pct = Math.round((accurateCount / activeQuestionsTier.length) * 100);
+            
+            // Save results to history
+            saveQuizScore(pct);
+
+            // Display metadata texts
+            document.getElementById("resultsLearnerName").textContent = selectedName;
+            document.getElementById("resultsScorePct").textContent = `${pct}%`;
+            document.getElementById("resultsAccuracyText").textContent = `${accurateCount}/${activeQuestionsTier.length}`;
+
+            // Configure Certificate triggers
+            if (pct >= 80) {
+                document.getElementById("resultsIcon").textContent = "🎓";
+                document.getElementById("resultsCertificateTriggerArea").style.display = "block";
+                
+                // Set Diploma data values
+                document.getElementById("certStudentName").textContent = selectedName;
+                document.getElementById("certAccuracyPercent").textContent = `${pct}%`;
+                
+                const rawDate = new Date();
+                document.getElementById("certIssueDate").textContent = rawDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } else {
+                document.getElementById("resultsIcon").textContent = "📈";
+                document.getElementById("resultsCertificateTriggerArea").style.display = "none";
+                document.getElementById("certDrawerWrapper").style.display = "none";
+            }
+
+            // Mistakes review compilation list
+            const reviewBox = document.getElementById("resultsMistakesSection");
+            const mistakesGrid = document.getElementById("mistakesReviewGrid");
+            mistakesGrid.innerHTML = "";
+
+            if (incorrectTracker.length > 0) {
+                reviewBox.style.display = "block";
+                incorrectTracker.forEach(({ question, userIndex, correctIndex }) => {
+                    const row = document.createElement("div");
+                    row.className = "stat-box";
+                    row.style.textAlign = "left";
+                    row.style.padding = "16px";
+                    row.style.borderLeft = "4px solid var(--danger)";
+
+                    row.innerHTML = `
+                        <strong style="display:block; margin-bottom: 6px; color: var(--text-main);">${question.question}</strong>
+                        <div style="font-size: 0.82rem; margin-bottom: 4px;">
+                            <span style="color: var(--danger); font-weight:700;">Your answer:</span> 
+                            <span>${userIndex !== -1 ? question.options[userIndex] : 'Skipped'}</span>
+                        </div>
+                        <div style="font-size: 0.82rem; margin-bottom: 10px;">
+                            <span style="color: var(--success); font-weight:700;">Correct answer:</span> 
+                            <span>${question.options[correctIndex]}</span>
+                        </div>
+                        <p style="font-size:0.8rem; border-top: 1px solid var(--border-glass); padding-top:6px; color: var(--text-muted); line-height:1.4;">
+                            ${question.explanation}
+                        </p>
+                    `;
+                    mistakesGrid.appendChild(row);
+                });
+            } else {
+                reviewBox.style.display = "none";
+            }
+
+            // Expose Screen
+            document.getElementById("quizGameplayScreen").style.display = "none";
+            document.getElementById("quizResultsScreen").style.display = "block";
+
+            playTone(pct >= 80 ? 650 : 450, "sine", 0.3);
+        }
+
+        function toggleCertificateDisplay() {
+            const drawer = document.getElementById("certDrawerWrapper");
+            if (drawer.style.display === "none") {
+                drawer.style.display = "block";
+                drawer.scrollIntoView({ behavior: 'smooth' });
+                playTone(550, "sine", 0.1);
+            } else {
+                drawer.style.display = "none";
+            }
+        }
+
+        function resetAnswersChallenge() {
+            document.getElementById("quizWelcomeScreen").style.display = "block";
+            document.getElementById("quizGameplayScreen").style.display = "none";
+            document.getElementById("quizResultsScreen").style.display = "none";
+            playTone(400, "sine", 0.08);
+        }
+
+        function showNotificationMessage(msg) {
+            showToast(msg, "success");
+        }
+    </script>
+</body>
+</html>
